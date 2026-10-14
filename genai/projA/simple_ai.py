@@ -1,18 +1,31 @@
+from urllib import response
+
 from openai import OpenAI
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 client = OpenAI(
-     base_url="http://127.0.0.1:11434/v1",
-     api_key="dummy_api_key"
+     base_url=os.getenv("BASE_URL"),
+     api_key=os.getenv("API_KEY")
 )
 
-response = client.chat.completions.create(
-    model="Qwen3:4b",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-     #    {"role": "user", "content": "Hello! Can you help me with a question?"}
-    ]
+while True:
+     user_input = input("User: ")
 
-)
+     if user_input.lower()  in ["exit", "quit"]:
+         break
 
-print("LLM Response: ")
-print(response.choices[0].message.content)
+     response = client.chat.completions.create(
+         model=os.getenv("MODEL"),
+         messages=[
+              {
+                   "role":"user",
+                   "content":user_input
+              }
+         ]
+
+        )
+     print("LLM Response: "+response.choices[0].message.content)
+
